@@ -1,17 +1,11 @@
+const { validationResult } = require("express-validator/check");
 const Product = require("../models/product");
 
 exports.getAddProduct = (req, res, next) => {
-  // this is to avoid access the routes by typing them
-  // eventhough their navigation links hidden
-  // this moved to middleware folder
-  // if (!req.session.isLoggedIn) {
-  //   return res.redirect("/login");
-  // }
   res.render("admin/edit-product", {
     pageTitle: "Add Product",
     path: "/admin/add-product",
-    editing: false
-    // isAuthenticated: req.session.isLoggedIn coz we add to a middleware in app.js
+    editing: false // this is responsible for editning the product in edit route
   });
 };
 
@@ -20,6 +14,7 @@ exports.postAddProduct = (req, res, next) => {
   const imageUrl = req.body.imageUrl;
   const price = req.body.price;
   const description = req.body.description;
+
   const product = new Product({
     title: title,
     price: price,
@@ -40,6 +35,7 @@ exports.postAddProduct = (req, res, next) => {
 };
 
 exports.getEditProduct = (req, res, next) => {
+  // this is responsible for editning the product in edit route
   const editMode = req.query.edit;
   if (!editMode) {
     return res.redirect("/");
@@ -69,7 +65,6 @@ exports.postEditProduct = (req, res, next) => {
 
   Product.findById(prodId)
     .then(product => {
-      // edit books only created by the use
       if (product.userId.toString() !== req.user._id.toString()) {
         return res.redirect("/");
       }
@@ -82,7 +77,6 @@ exports.postEditProduct = (req, res, next) => {
         res.redirect("/admin/products");
       });
     })
-
     .catch(err => console.log(err));
 };
 
@@ -103,7 +97,6 @@ exports.getProducts = (req, res, next) => {
 
 exports.postDeleteProduct = (req, res, next) => {
   const prodId = req.body.productId;
-  // Product.findByIdAndRemove(prodId)
   Product.deleteOne({ _id: prodId, userId: req.user._id })
     .then(() => {
       console.log("DESTROYED PRODUCT");
