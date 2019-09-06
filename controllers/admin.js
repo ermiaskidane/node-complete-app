@@ -1,11 +1,14 @@
 const { validationResult } = require("express-validator/check");
 const Product = require("../models/product");
 
-exports.getAddProduct = (req, res, next) => {
+ exports.getAddProduct = (req, res, next) => {
   res.render("admin/edit-product", {
     pageTitle: "Add Product",
     path: "/admin/add-product",
-    editing: false // this is responsible for editning the product in edit route
+    editing: false, // this is responsible for editning the product in edit route
+    hasError: false,
+    errorMessage: null,
+    validationErrors: []
   });
 };
 
