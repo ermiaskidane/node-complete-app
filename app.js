@@ -21,6 +21,17 @@ const store = new MongoDBStore({
 });
 const csrfProtection = csrf();
 
+const fileStorage = multer.diskStorage({
+  destination: (req, file, cb) => {
+    cb(null, "images");
+  },
+  filename: (req, file, cb) => {
+    cb(null, new Date().getTime() + "-" + file.originalname);
+    // on window toISOString() doesnot work coz semiconlons is not supported on window
+    // cb(null, new Date().toISOString() + "-" + file.originalname);
+  }
+});
+
 app.set("view engine", "ejs");
 app.set("views", "views");
 
