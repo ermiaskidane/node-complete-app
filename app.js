@@ -96,8 +96,9 @@ app.use((req, res, next) => {
 
 app.post("/create-order", isAuth, shopController.postOrder);
 
+// to exclude the protection of csrf token for above route
+app.use(csrfProtection);
 app.use((req, res, next) => {
-  res.locals.isAuthenticated = req.session.isLoggedIn;
   res.locals.csrfToken = req.csrfToken();
   next();
 });
