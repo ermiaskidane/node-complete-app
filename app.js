@@ -11,6 +11,8 @@ const multer = require("multer");
 
 const errorController = require("./controllers/error");
 const User = require("./models/user");
+const shopController = require("./controllers/shop");
+const isAuth = require("./middleware/is-auth");
 
 const MONGODB_URI = "API_KEY";
 
