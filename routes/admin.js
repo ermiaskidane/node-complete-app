@@ -40,6 +40,10 @@ router.post("/edit-product",[
       .trim()
   ], isAuth, adminController.postEditProduct);
 
-router.post("/delete-product", isAuth, adminController.postDeleteProduct);
+//send request using javascript async
+router.delete("/product/:productId", isAuth, adminController.deleteProduct);
+
+// send request using browser
+// router.post('/delete-product', isAuth, adminController.postDeleteProduct);
 
 module.exports = router;
