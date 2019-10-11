@@ -20,8 +20,7 @@ router.post(
       .withMessage("Please enter a valid email address.")
       .normalizeEmail(),
     body(
-      "password",
-      "please enter a password with only numbers and text and at least 5 characters"
+      'password', 'Password has to be valid.'
     )
       .isLength({ min: 6 })
       .isAlphanumeric()
@@ -58,13 +57,13 @@ router.post(
       .isAlphanumeric()
       .trim(),
     body("confirmPassword")
+      .trim()
       .custom((value, { req }) => {
         if (value !== req.body.password) {
           throw new Error("password have to match!");
         }
         return true;
-      })
-      .trim()
+      })   
   ],
 
   authController.postSignup
