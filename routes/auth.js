@@ -1,10 +1,10 @@
 const express = require("express");
 const { check, body } = require("express-validator/check");
-const User = require("../models/user");
-
-console.log(require("express-validator/check"), "routes");
 
 const authController = require("../controllers/auth");
+const User = require("../models/user");
+
+// console.log(require("express-validator/check"), "routes");
 
 const router = express.Router();
 
@@ -17,7 +17,7 @@ router.post(
   [
     check("email")
       .isEmail()
-      .withMessage("wrong email or password, try again")
+      .withMessage("Please enter a valid email address.")
       .normalizeEmail(),
     body(
       "password",
