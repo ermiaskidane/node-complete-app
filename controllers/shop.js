@@ -51,7 +51,11 @@ exports.getProduct = (req, res, next) => {
         path: "/products"
       });
     })
-    .catch(err => console.log(err));
+    .catch(err => {
+      const error = new Error(err);
+      error.httpStatusCode = 500;
+      return next(error);
+    });
 };
 
 exports.getIndex = (req, res, next) => {
