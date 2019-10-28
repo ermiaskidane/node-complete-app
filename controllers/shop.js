@@ -182,6 +182,60 @@ exports.getCheckout = (req, res, next) => {
 };
 
 exports.postOrder = (req, res, next) => {
+  const stripe = require("stripe")(
+    "API-Key"
+  );
+  let totalSum = 0;
+  // Token is created using Checkout or Elements!
+  // Get the payment token ID submitted by the form:
+  const token = req.body.stripeToken; // Using Express
+
+  req.user
+    .populate("cart.items.productId")
+    .execPopulate()
+    .then(user => {
+      user.cart.items.forEach(p => {
+        totalSum += p.quantity * p.productId.price;
+      });
+      // const charge = stripe.charges.create({
+      //   amount: totalSum * 100,
+      //   currency: "gbp",
+      //   description: "Example charge",
+      //   source: token
+      // });
+      const products = user.cart.items.map(i => {
+        return { quantity: i.quantity, product: { ...i.productId._doc } };
+      });
+      const order = new Order({
+        user: {
+          email: req.user.email,
+          userId: req.user
+        },
+        products: products
+      });
+      return order.save();
+    })
+    .then(result => {
+      const charge = stripe.charges.create({
+        amount: totalSum * 100,
+        currency: "gbp",
+        description: "Demo Order",
+        source: token,
+        metadata: { order_id: result._id.toString() }
+      });
+      return req.user.clearCart();
+    })
+    .then(() => {
+      res.redirect("/orders");
+    })
+    .catch(err => {
+      const error = new Error(err);
+      error.httpStatusCode = 500;
+      return next(error);
+    });
+};
+
+exports.postOrder = (req, res, next) => {
   req.user
     .populate("cart.items.productId")
     .execPopulate()
